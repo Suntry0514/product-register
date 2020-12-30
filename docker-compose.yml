@@ -1,0 +1,47 @@
+version: '3'
+
+#DBのデータを保存するためのボリュームを作成する
+#docker volumeに保存する docker volume --helpコマンドでどんなコマンドがあるか確認できる
+volumes:
+  db-data:
+
+#serviceとは１つ１つのコンテナのこと
+services:
+  #service1 execで使用する名前
+  web:
+    #image:image名 イメージを使用する場合
+    #sercice1のパラメータ keyとvalueをかく 基本的にオプションを記述していくイメージ
+    build: .
+    #service1のパラメータ
+    #-pコマンドを表している
+    ports:
+      - '3000:3000'
+    #-vコマンドを表している
+    volumes:
+      #パスは相対パスで書く
+      - '.:/practice_web'
+    #環境変数を指定する
+    environment:
+      - 'DATABASE_PASSWORD=postgres'
+      - 'PRACTICE_WEB_DATABASE_PASSWORD=postgres'
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=postgres'
+    #以下は-itのコマンドを表している
+    tty: true
+    stdin_open: true
+    #指定したサービスが作成されたら、この膿webのサービスを作成されるようにする
+    depends_on:
+      - db
+    #webからdbにアクセスできるようになる　指定したサービスへアクセスするための設定
+    links:
+      - db
+
+  db:
+    #dokcerを使用してDockerHubからイメージをDLする
+    image: postgres
+    #https://qiita.com/tomopict/items/23cc4332781bb28d2973
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+    #docker volumeを使用してDBのデータを保存する
+    volumes:
+      - 'db-data:/var/lib/postgresql/data'
