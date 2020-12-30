@@ -41,7 +41,7 @@ services:
     image: postgres
     #https://qiita.com/tomopict/items/23cc4332781bb28d2973
     environment:
-      POSTGRES_HOST_AUTH_METHOD: 'trust'
+      - 'POSTGRES_HOST_AUTH_METHOD=trust'
     #docker volumeを使用してDBのデータを保存する
     volumes:
       - 'db-data:/var/lib/postgresql/data'
